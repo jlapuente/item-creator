@@ -23,6 +23,7 @@
             "polyfills": [
               "zone.js"
             ],
+            "baseHref": "/item-creator/",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
