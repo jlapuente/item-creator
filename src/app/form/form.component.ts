@@ -35,20 +35,22 @@ export class ContactFormComponent {
       // Obtener los valores del formulario
       this.formValues = this.itemForm.value;
       // Generar el contenido del archivo .lua
-      this.luaContent = `ITEM.name = "${this.formValues.itemName}"
-    ITEM.description = "${this.formValues.itemDescription}"
-    ITEM.model = "${this.formValues.model}"
-    ITEM.width = "${this.formValues.width}"
-    ITEM.height = "${this.formValues.height}"
-    ITEM.isQuestItem = "${this.formValues.isForMission}"
-    ITEM.colorAppendix = {
-      ["red"] = "${this.formValues.redAppendix}",
-      ["green"] = "${this.formValues.greenAppendix}",
-      ["blue"] = "${this.formValues.blueAppendix}"
-    }`;
+      this.luaContent = `
+ITEM.name = "${this.formValues.itemName}"
+ITEM.description = "${this.formValues.itemDescription}"
+ITEM.model = "${this.formValues.model}"
+ITEM.width = ${this.formValues.width}
+ITEM.height = ${this.formValues.height}
+ITEM.isQuestItem = "${this.formValues.isForMission}"
+ITEM.colorAppendix = {
+  ["red"] = "${this.formValues.redAppendix}",
+  ["green"] = "${this.formValues.greenAppendix}",
+  ["blue"] = "${this.formValues.blueAppendix}"
+}
+`.trim();
 
       // Crear y descargar el archivo .lua
-      this.downloadFile(this.luaContent, this.formValues.fileName + '.lua');
+      this.downloadFile(this.luaContent, 'sh_'+this.formValues.fileName + '.lua');
     } else {
       console.log('Form is invalid');
     }

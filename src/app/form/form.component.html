@@ -3,7 +3,7 @@
   <div class="contact__wrapper shadow-lg mt-n9">
     <div class="row no-gutters">
       <div class="col-lg-5 contact-info__wrapper gradient-brand-color p-5 order-lg-2">
-        <h3 class="color--white mb-5">Item Details</h3>
+        <h3 class="color--white mb-5">Output</h3>
 
       <textarea class="form-control" [innerText]="luaContent || ''" rows="10" readonly></textarea>
 
@@ -25,6 +25,7 @@
       </div>
 
       <div class="col-lg-7 form__wrapper p-5 order-lg-1">
+        <h3 class="color--white mb-5">Item Form</h3>
         <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="form form-validate" novalidate>
           <div class="row">
             <div class="col-sm-12 mb-3">
