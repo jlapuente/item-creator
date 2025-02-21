@@ -5,9 +5,9 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
-  styleUrls: ['./form.component.css'],
-  standalone: true, // Marca el componente como standalone
-  imports: [ReactiveFormsModule, CommonModule] // Importa los módulos necesarios
+  styleUrls: ['./form.component.scss'],
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule]
 })
 export class ContactFormComponent {
   itemForm: FormGroup;
