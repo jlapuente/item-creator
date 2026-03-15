@@ -50,9 +50,9 @@ export class ContactFormComponent implements OnInit, OnDestroy {
 
   /** Campos que aparecen después de la sección dinámica (base + categoría + appendix) */
   appendixFields: BaseFieldConfig[] = [
-    { name: 'redAppendix', label: 'Apéndice rojo', type: 'text', placeholder: 'Apéndice rojo', colClass: 'col-sm-4' },
-    { name: 'greenAppendix', label: 'Apéndice verde', type: 'text', placeholder: 'Apéndice verde', colClass: 'col-sm-4' },
-    { name: 'blueAppendix', label: 'Apéndice azul', type: 'text', placeholder: 'Apéndice azul', colClass: 'col-sm-4' },
+    { name: 'redAppendix', label: 'Apéndice rojo', type: 'text', placeholder: 'Apéndice rojo', colClass: 'col-sm-12' },
+    { name: 'greenAppendix', label: 'Apéndice verde', type: 'text', placeholder: 'Apéndice verde', colClass: 'col-sm-12' },
+    { name: 'blueAppendix', label: 'Apéndice azul', type: 'text', placeholder: 'Apéndice azul', colClass: 'col-sm-12' },
   ];
 
   /** Campo selector de base (se renderiza aparte por su lógica especial) */
