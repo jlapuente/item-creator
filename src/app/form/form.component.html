@@ -42,7 +42,7 @@
           <ng-template #fieldTpl let-field>
             <div [ngClass]="field.colClass || 'col-sm-6'" class="mb-3">
               <div class="form-group">
-                <label [for]="field.name" [class.required-field]="field.required">{{ field.label }}</label>
+                <label *ngIf="field.type !== 'checkbox'" [for]="field.name" [class.required-field]="field.required">{{ field.label }}</label>
                 
                 <!-- Text input -->
                 <input *ngIf="field.type === 'text'" type="text" class="form-control"
@@ -66,8 +66,11 @@
               </select>
               
               <!-- Checkbox -->
-              <input *ngIf="field.type === 'checkbox'" type="checkbox" class="form-check-input"
-              [id]="field.name" [formControlName]="field.name">
+              <div *ngIf="field.type === 'checkbox'" class="form-check form-switch mt-2">
+                <input type="checkbox" class="form-check-input"
+                  [id]="field.name" [formControlName]="field.name">
+                <label class="form-check-label" [for]="field.name">{{ field.label }}</label>
+              </div>
               
                 <small *ngIf="field.description" class="form-text text-muted d-block mb-1">{{ field.description }}</small>
                 <!-- Validation message -->
