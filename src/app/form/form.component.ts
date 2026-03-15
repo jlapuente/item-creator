@@ -130,6 +130,13 @@ export class ContactFormComponent implements OnInit, OnDestroy {
         const sanitized = (itemName || '').toLowerCase().replace(/\s+/g, '_');
         this.itemForm.get('fileName')!.setValue(`sh_${sanitized}.lua`, { emitEvent: false });
       });
+
+    // Actualizar luaContent cada vez que cambie cualquier campo
+    this.itemForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.generateLuaContent();
+      });
   }
 
   ngOnDestroy(): void {
@@ -160,29 +167,47 @@ export class ContactFormComponent implements OnInit, OnDestroy {
         this.fb.control(field.defaultValue ?? '', field.validators ?? [])
       );
     });
+
+    // Regenerar Lua con los nuevos campos
+    this.generateLuaContent();
+  }
+
+  /** Campos que no se incluyen en la salida Lua (internos del formulario) */
+  private readonly excludedFields = new Set(['fileName', 'base', 'redAppendix', 'greenAppendix', 'blueAppendix']);
+
+  /** Genera el contenido Lua dinámicamente a partir de todos los campos del formulario */
+  generateLuaContent(): void {
+    this.formValues = this.itemForm.getRawValue();
+    const lines: string[] = [];
+
+    for (const [key, value] of Object.entries(this.formValues)) {
+      if (this.excludedFields.has(key)) {
+        continue;
+      }
+
+      if (typeof value === 'boolean') {
+        lines.push(`ITEM.${key} = ${value}`);
+      } else if (typeof value === 'number') {
+        lines.push(`ITEM.${key} = ${value}`);
+      } else {
+        lines.push(`ITEM.${key} = "${value}"`);
+      }
+    }
+
+    // colorAppendix se construye manualmente
+    lines.push(`ITEM.colorAppendix = {`);
+    lines.push(`  ["red"] = "${this.formValues.redAppendix}",`);
+    lines.push(`  ["green"] = "${this.formValues.greenAppendix}",`);
+    lines.push(`  ["blue"] = "${this.formValues.blueAppendix}"`);
+    lines.push(`}`);
+
+    this.luaContent = lines.join('\n');
   }
 
   onSubmit(): void {
     if (this.itemForm.valid) {
-      // Obtener los valores del formulario (getRawValue incluye campos disabled)
-      this.formValues = this.itemForm.getRawValue();
-      // Generar el contenido del archivo .lua
-      this.luaContent = `
-ITEM.name = "${this.formValues.itemName}"
-ITEM.description = "${this.formValues.itemDescription}"
-ITEM.model = "${this.formValues.model}"
-ITEM.width = ${this.formValues.width}
-ITEM.height = ${this.formValues.height}
-ITEM.isQuestItem = "${this.formValues.isForMission}"
-ITEM.colorAppendix = {
-  ["red"] = "${this.formValues.redAppendix}",
-  ["green"] = "${this.formValues.greenAppendix}",
-  ["blue"] = "${this.formValues.blueAppendix}"
-}
-`.trim();
-
-      // Crear y descargar el archivo .lua
-      this.downloadFile(this.luaContent, this.formValues.fileName);
+      this.generateLuaContent();
+      this.downloadFile(this.luaContent, this.itemForm.getRawValue().fileName);
     } else {
       console.log('Form is invalid');
     }
