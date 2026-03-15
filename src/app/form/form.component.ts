@@ -8,10 +8,14 @@ export interface BaseFieldConfig {
   label: string;
   type: 'text' | 'number' | 'select' | 'textarea' | 'checkbox';
   placeholder?: string;
+  description?: string;  // Texto de ayuda para el usuario
   defaultValue?: any;
   validators?: any[];
   options?: { label: string; value: any }[];  // Para campos tipo select
   colClass?: string;  // Clase de columna Bootstrap (por defecto 'col-sm-6')
+  readonly?: boolean;
+  disabled?: boolean;
+  required?: boolean;
 }
 
 export interface BaseOption {
@@ -31,6 +35,29 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   itemForm: FormGroup;
   luaContent!: string;
   formValues: any;
+
+  /** Campos base del formulario (siempre visibles) */
+  coreFields: BaseFieldConfig[] = [
+    { name: 'fileName', label: 'Nombre del fichero', type: 'text', placeholder: 'Se genera automáticamente', readonly: true, disabled: true, colClass: 'col-sm-12' },
+    { name: 'itemName', label: 'Nombre del item', type: 'text', placeholder: 'Nombre del item', required: true, colClass: 'col-sm-6', validators: [Validators.required] },
+    { name: 'isForMission', label: '¿Es para misión?', type: 'select', options: [{ label: 'Sí', value: true }, { label: 'No', value: false }], defaultValue: false, colClass: 'col-sm-6' },
+    { name: 'itemDescription', label: 'Descripción del item', type: 'textarea', placeholder: 'Descripción del item', required: true, colClass: 'col-sm-12', validators: [Validators.required] },
+    { name: 'model', label: 'Modelo', type: 'text', placeholder: 'Modelo', colClass: 'col-sm-6' },
+    { name: 'skin', label: 'Skin', type: 'text', placeholder: 'Skin', colClass: 'col-sm-6' },
+    { name: 'height', label: 'Altura', type: 'number', placeholder: 'Altura', defaultValue: 1, colClass: 'col-sm-6' },
+    { name: 'width', label: 'Anchura', type: 'number', placeholder: 'Anchura', defaultValue: 1, colClass: 'col-sm-6' },
+  ];
+
+  /** Campos que aparecen después de la sección dinámica (base + categoría + appendix) */
+  appendixFields: BaseFieldConfig[] = [
+    { name: 'redAppendix', label: 'Apéndice rojo', type: 'text', placeholder: 'Apéndice rojo', colClass: 'col-sm-4' },
+    { name: 'greenAppendix', label: 'Apéndice verde', type: 'text', placeholder: 'Apéndice verde', colClass: 'col-sm-4' },
+    { name: 'blueAppendix', label: 'Apéndice azul', type: 'text', placeholder: 'Apéndice azul', colClass: 'col-sm-4' },
+  ];
+
+  /** Campo selector de base (se renderiza aparte por su lógica especial) */
+  baseField: BaseFieldConfig = { name: 'base', label: 'Base', type: 'select', options: [], colClass: 'col-sm-6' };
+  categoryField: BaseFieldConfig = { name: 'category', label: 'Categoría', type: 'text', placeholder: 'Categoría del item', colClass: 'col-sm-6' };
 
   /** Opciones disponibles para el selector 'base'. */
   baseOptions: BaseOption[] = [
@@ -113,21 +140,27 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   constructor(private readonly fb: FormBuilder) {
-    this.itemForm = this.fb.group({
-      fileName: [{ value: '', disabled: true }],
-      itemName: ['', Validators.required],
-      itemDescription: ['', Validators.required],
-      model: [''],
-      skin: [''],
-      height: [1],
-      width: [1],
-      isForMission: [false],
-      base: [''],
-      category: [''],
-      redAppendix: [''],
-      greenAppendix: [''],
-      blueAppendix: ['']
+    // Construir las opciones del selector de base a partir de baseOptions
+    this.baseField.options = [
+      { label: '-- Selecciona una base --', value: '' },
+      ...this.baseOptions.map(opt => ({ label: opt.label, value: opt.value }))
+    ];
+
+    // Construir el FormGroup dinámicamente a partir de las configs
+    const controls: Record<string, any> = {};
+    const allStaticFields = [...this.coreFields, this.baseField, this.categoryField, ...this.appendixFields];
+
+    allStaticFields.forEach(field => {
+      const value = field.defaultValue ?? '';
+      const validators = field.validators ?? [];
+      if (field.disabled) {
+        controls[field.name] = [{ value, disabled: true }, validators];
+      } else {
+        controls[field.name] = [value, validators];
+      }
     });
+
+    this.itemForm = this.fb.group(controls);
   }
 
   ngOnInit(): void {

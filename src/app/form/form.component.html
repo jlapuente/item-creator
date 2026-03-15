@@ -4,155 +4,34 @@
     <div class="row no-gutters">
       <div class="col-lg-5 contact-info__wrapper gradient-brand-color p-5 order-lg-2">
         <h3 class="color--white mb-5">Output</h3>
-
-      <textarea class="form-control" [innerText]="luaContent || ''" rows="10" readonly></textarea>
+        <textarea class="form-control" [innerText]="luaContent || ''" rows="10" readonly></textarea>
       </div>
 
       <div class="col-lg-7 form__wrapper p-5 order-lg-1">
         <h3 class="color--white mb-5">Item Form</h3>
         <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="form form-validate" novalidate>
           <div class="row">
-            <div class="col-sm-12 mb-3">
-              <div class="form-group">
-                <label for="fileName">Nombre del fichero</label>
-                <input type="text" class="form-control" id="fileName" formControlName="fileName"
-                  placeholder="Se genera automáticamente" readonly>
-              </div>
-            </div>
 
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label class="required-field" for="itemName">Nombre del item</label>
-                <input type="text" class="form-control" id="itemName" formControlName="itemName"
-                  placeholder="Nombre del item">
-                <small *ngIf="itemForm.get('itemName')?.invalid && itemForm.get('itemName')?.touched" class="text-danger">
-                  Este campo es obligatorio.
-                </small>
-              </div>
-            </div>
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label for="isForMission">¿Es para misión?</label>
-                <select class="form-control" id="isForMission" formControlName="isForMission">
-                  <option value="true">Sí</option>
-                  <option value="false">No</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="col-sm-12 mb-3">
-              <div class="form-group">
-                <label class="required-field" for="itemDescription">Descripción del item</label>
-                <textarea class="form-control" id="itemDescription" formControlName="itemDescription" rows="4"
-                  placeholder="Descripción del item"></textarea>
-                <small *ngIf="itemForm.get('itemDescription')?.invalid && itemForm.get('itemDescription')?.touched"
-                  class="text-danger">
-                  Este campo es obligatorio.
-                </small>
-              </div>
-            </div>
-            
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label for="model">Modelo</label>
-                <input type="text" class="form-control" id="model" formControlName="model" placeholder="Modelo">
-              </div>
-            </div>
-            
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label for="skin">Skin</label>
-                <input type="text" class="form-control" id="skin" formControlName="skin" placeholder="Skin">
-              </div>
-            </div>
-            
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label for="model">Altura</label>
-                <input type="text" class="form-control" id="height" formControlName="height" placeholder="Altura">
-              </div>
-            </div>
-            
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label for="model">Anchura</label>
-                <input type="text" class="form-control" id="width" formControlName="width" placeholder="Anchura">
-              </div>
-            </div>
+            <!-- Campos base -->
+            <ng-container *ngFor="let field of coreFields">
+              <ng-container *ngTemplateOutlet="fieldTpl; context: { $implicit: field }"></ng-container>
+            </ng-container>
 
             <!-- Selector de Base -->
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label for="base">Base</label>
-                <select class="form-control" id="base" formControlName="base">
-                  <option value="">-- Selecciona una base --</option>
-                  <option *ngFor="let option of baseOptions" [value]="option.value">{{ option.label }}</option>
-                </select>
-              </div>
-            </div>
+            <ng-container *ngTemplateOutlet="fieldTpl; context: { $implicit: baseField }"></ng-container>
 
-            <div class="col-sm-6 mb-3">
-              <div class="form-group">
-                <label for="category">Categoría</label>
-                <input type="text" class="form-control" id="category" formControlName="category"
-                  placeholder="Categoría del item">
-              </div>
-            </div>
+            <!-- Categoría -->
+            <ng-container *ngTemplateOutlet="fieldTpl; context: { $implicit: categoryField }"></ng-container>
 
             <!-- Campos dinámicos según la base seleccionada -->
             <ng-container *ngFor="let field of activeBaseFields">
-              <div [ngClass]="field.colClass || 'col-sm-6'" class="mb-3">
-                <div class="form-group">
-                  <label [for]="field.name">{{ field.label }}</label>
-
-                  <!-- Text input -->
-                  <input *ngIf="field.type === 'text'" type="text" class="form-control"
-                    [id]="field.name" [formControlName]="field.name" [placeholder]="field.placeholder || ''">
-
-                  <!-- Number input -->
-                  <input *ngIf="field.type === 'number'" type="number" class="form-control"
-                    [id]="field.name" [formControlName]="field.name" [placeholder]="field.placeholder || ''">
-
-                  <!-- Textarea -->
-                  <textarea *ngIf="field.type === 'textarea'" class="form-control"
-                    [id]="field.name" [formControlName]="field.name" [placeholder]="field.placeholder || ''" rows="3"></textarea>
-
-                  <!-- Select -->
-                  <select *ngIf="field.type === 'select'" class="form-control"
-                    [id]="field.name" [formControlName]="field.name">
-                    <option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.label }}</option>
-                  </select>
-
-                  <!-- Checkbox -->
-                  <input *ngIf="field.type === 'checkbox'" type="checkbox" class="form-check-input"
-                    [id]="field.name" [formControlName]="field.name">
-                </div>
-              </div>
+              <ng-container *ngTemplateOutlet="fieldTpl; context: { $implicit: field }"></ng-container>
             </ng-container>
-            
-            <div class="col-sm-4 mb-3">
-              <div class="form-group">
-                <label for="redAppendix">Apéndice rojo</label>
-                <input type="text" class="form-control" id="redAppendix" formControlName="redAppendix"
-                  placeholder="Apéndice rojo">
-              </div>
-            </div>
 
-            <div class="col-sm-4 mb-3">
-              <div class="form-group">
-                <label for="greenAppendix">Apéndice verde</label>
-                <input type="text" class="form-control" id="greenAppendix" formControlName="greenAppendix"
-                  placeholder="Apéndice verde">
-              </div>
-            </div>
-
-            <div class="col-sm-4 mb-3">
-              <div class="form-group">
-                <label for="blueAppendix">Apéndice azul</label>
-                <input type="text" class="form-control" id="blueAppendix" formControlName="blueAppendix"
-                  placeholder="Apéndice azul">
-              </div>
-            </div>
+            <!-- Campos de apéndice de color -->
+            <ng-container *ngFor="let field of appendixFields">
+              <ng-container *ngTemplateOutlet="fieldTpl; context: { $implicit: field }"></ng-container>
+            </ng-container>
 
             <div class="col-sm-12 mb-3">
               <button type="submit" [disabled]="itemForm.invalid" class="btn btn-primary">Descargar fichero</button>
@@ -163,3 +42,44 @@
     </div>
   </div>
 </div>
+
+<!-- Template reutilizable para renderizar cualquier campo -->
+<ng-template #fieldTpl let-field>
+  <div [ngClass]="field.colClass || 'col-sm-6'" class="mb-3">
+    <div class="form-group">
+      <label [for]="field.name" [class.required-field]="field.required">{{ field.label }}</label>
+      <small *ngIf="field.description" class="form-text text-muted d-block mb-1">{{ field.description }}</small>
+
+      <!-- Text input -->
+      <input *ngIf="field.type === 'text'" type="text" class="form-control"
+        [id]="field.name" [formControlName]="field.name"
+        [placeholder]="field.placeholder || ''" [readonly]="field.readonly || false">
+
+      <!-- Number input -->
+      <input *ngIf="field.type === 'number'" type="number" class="form-control"
+        [id]="field.name" [formControlName]="field.name"
+        [placeholder]="field.placeholder || ''" [readonly]="field.readonly || false">
+
+      <!-- Textarea -->
+      <textarea *ngIf="field.type === 'textarea'" class="form-control"
+        [id]="field.name" [formControlName]="field.name"
+        [placeholder]="field.placeholder || ''" rows="3" [readonly]="field.readonly || false"></textarea>
+
+      <!-- Select -->
+      <select *ngIf="field.type === 'select'" class="form-control"
+        [id]="field.name" [formControlName]="field.name">
+        <option *ngFor="let opt of field.options" [ngValue]="opt.value">{{ opt.label }}</option>
+      </select>
+
+      <!-- Checkbox -->
+      <input *ngIf="field.type === 'checkbox'" type="checkbox" class="form-check-input"
+        [id]="field.name" [formControlName]="field.name">
+
+      <!-- Validation message -->
+      <small *ngIf="field.required && itemForm.get(field.name)?.invalid && itemForm.get(field.name)?.touched"
+        class="text-danger">
+        Este campo es obligatorio.
+      </small>
+    </div>
+  </div>
+</ng-template>
