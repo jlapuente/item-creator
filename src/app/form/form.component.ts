@@ -40,12 +40,12 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   coreFields: BaseFieldConfig[] = [
     { name: 'fileName', label: 'Nombre del fichero', type: 'text', placeholder: 'Se genera automáticamente', readonly: true, disabled: true, colClass: 'col-sm-12' },
     { name: 'itemName', label: 'Nombre del item', type: 'text', placeholder: 'Nombre del item', required: true, colClass: 'col-sm-6', validators: [Validators.required] },
-    { name: 'isForMission', label: '¿Es para misión?', type: 'select', options: [{ label: 'Sí', value: true }, { label: 'No', value: false }], defaultValue: false, colClass: 'col-sm-6' },
+    { name: 'isQuestItem', label: '¿Es item de misión?', type: 'checkbox', defaultValue: false, colClass: 'col-sm-6' },
     { name: 'itemDescription', label: 'Descripción del item', type: 'textarea', placeholder: 'Descripción del item', required: true, colClass: 'col-sm-12', validators: [Validators.required] },
     { name: 'model', label: 'Modelo', type: 'text', placeholder: 'Modelo', colClass: 'col-sm-6' },
-    { name: 'skin', label: 'Skin', type: 'text', placeholder: 'Skin', colClass: 'col-sm-6' },
-    { name: 'height', label: 'Altura', type: 'number', placeholder: 'Altura', defaultValue: 1, colClass: 'col-sm-6' },
-    { name: 'width', label: 'Anchura', type: 'number', placeholder: 'Anchura', defaultValue: 1, colClass: 'col-sm-6' },
+    { name: 'skin', label: 'Skin', type: 'text', placeholder: 'Skin', colClass: 'col-sm-6', description: 'Algunos modelos tienen submodelos propios, "skins"' },
+    { name: 'height', label: 'Altura', type: 'number', placeholder: 'Altura', defaultValue: 1, colClass: 'col-sm-6', description: 'Altura del item en el inventario. Por defecto 1.' },
+    { name: 'width', label: 'Anchura', type: 'number', placeholder: 'Anchura', defaultValue: 1, colClass: 'col-sm-6', description: 'Anchura del item en el inventario. Por defecto 1.' },
   ];
 
   /** Campos que aparecen después de la sección dinámica (base + categoría + appendix) */
@@ -56,8 +56,8 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   ];
 
   /** Campo selector de base (se renderiza aparte por su lógica especial) */
-  baseField: BaseFieldConfig = { name: 'base', label: 'Base', type: 'select', options: [], colClass: 'col-sm-6' };
-  categoryField: BaseFieldConfig = { name: 'category', label: 'Categoría', type: 'text', placeholder: 'Categoría del item', colClass: 'col-sm-6' };
+  baseField: BaseFieldConfig = { name: 'base', label: 'Base', type: 'select', options: [], colClass: 'col-sm-6', description: 'El arquetipo que usará el item como referencia. Determina el comportamiento del item in game.' };
+  categoryField: BaseFieldConfig = { name: 'category', label: 'Categoría', type: 'text', placeholder: 'Categoría del item', colClass: 'col-sm-6', description: 'El apartado de la Q > Items en el que aparece. Por defecto, el nombre de su base.' };
 
   /** Opciones disponibles para el selector 'base'. */
   baseOptions: BaseOption[] = [
@@ -65,12 +65,12 @@ export class ContactFormComponent implements OnInit, OnDestroy {
       label: 'Comida',
       value: 'food',
       fields: [
-        { name: 'hunger', label: 'Hambre', type: 'number', placeholder: 'Cantidad de hambre que restaura', defaultValue: 0, colClass: 'col-sm-6' },
-        { name: 'thirst', label: 'Sed', type: 'number', placeholder: 'Cantidad de sed que restaura', defaultValue: 0, colClass: 'col-sm-6' },
-        { name: 'health', label: 'Curación', type: 'number', placeholder: 'Cantidad de curación', defaultValue: 0, colClass: 'col-sm-6' },
-        { name: 'damage', label: 'Daño a la salud', type: 'number', placeholder: 'Daño a la salud', defaultValue: 0, colClass: 'col-sm-6' },
-        { name: 'spoilTime', label: 'Tiempo de caducidad', type: 'number', placeholder: 'Tiempo de caducidad', defaultValue: 0, colClass: 'col-sm-6' },
-        { name: 'maxStackSize', label: 'Tamaño máximo de stack', type: 'number', placeholder: 'Tamaño máximo de stack', defaultValue: 0, colClass: 'col-sm-6' },
+        { name: 'hunger', label: 'Hambre', type: 'number', placeholder: 'Cantidad de hambre que restaura', defaultValue: 0, colClass: 'col-sm-3' },
+        { name: 'thirst', label: 'Sed', type: 'number', placeholder: 'Cantidad de sed que restaura', defaultValue: 0, colClass: 'col-sm-3' },
+        { name: 'health', label: 'Curación', type: 'number', placeholder: 'Cantidad de curación', defaultValue: 0, colClass: 'col-sm-3' },
+        { name: 'damage', label: 'Daño a la salud', type: 'number', placeholder: 'Daño a la salud', defaultValue: 0, colClass: 'col-sm-3' },
+        { name: 'spoilTime', label: 'Tiempo en dias para caducar', type: 'number', placeholder: 'Tiempo de caducidad', defaultValue: 0, colClass: 'col-sm-3' },
+        { name: 'maxStackSize', label: 'Tamaño máximo de stack', type: 'number', placeholder: 'Tamaño máximo de stack', defaultValue: 0, colClass: 'col-sm-3' },
       ]
     },
     {
@@ -93,8 +93,8 @@ export class ContactFormComponent implements OnInit, OnDestroy {
       label: 'Documento',
       value: 'document',
       fields: [
-        { name: 'docName', label: 'Nombre del documento', type: 'text', placeholder: 'Nombre del documento', colClass: 'col-sm-12' },
-        { name: 'docLink', label: 'Link del documento', type: 'text', placeholder: 'Link del documento', colClass: 'col-sm-12' },
+        { name: 'docName', label: 'Nombre del documento', type: 'text', placeholder: 'Nombre del documento', colClass: 'col-sm-12', description: 'Ahora mismo este campos no se usa para nada, pero será util mas adelante.' },
+        { name: 'docLink', label: 'Link del documento', type: 'text', placeholder: 'Link del documento', colClass: 'col-sm-12', description: 'Se aconseja que al obtener este link, se verifique que acabe en /preview en vez de en /edit para evitar que aparezcan los controles.' },
       ]
     },
     {
@@ -111,18 +111,18 @@ export class ContactFormComponent implements OnInit, OnDestroy {
       label: 'Cantimplora',
       value: 'canteen',
       fields: [
-        { name: 'maxWater', label: 'Agua máxima', type: 'number', placeholder: 'Cantidad máxima de agua', defaultValue: 0, colClass: 'col-sm-6' },
+        { name: 'maxWater', label: 'Agua máxima en cl', type: 'number', placeholder: 'Cantidad máxima de agua', defaultValue: 0, colClass: 'col-sm-6' },
       ]
     },
     {
       label: 'Médico',
       value: 'medical',
       fields: [
-        { name: 'usableInCombat', label: 'Usable en combate', type: 'checkbox', defaultValue: false, colClass: 'col-sm-6' },
+        { name: 'usableInCombat', label: '¿Es usable en combate?', type: 'checkbox', defaultValue: false, colClass: 'col-sm-6' },
         { name: 'maxStackSize', label: 'Tamaño máximo de stack', type: 'number', placeholder: 'Tamaño máximo de stack', defaultValue: 0, colClass: 'col-sm-6' },
         { name: 'healing', label: 'Curación', type: 'number', placeholder: 'Cantidad de curación', defaultValue: 0, colClass: 'col-sm-6' },
         { name: 'useSound', label: 'Sonido de uso', type: 'text', placeholder: 'Ruta del sonido de uso', colClass: 'col-sm-6' },
-        { name: 'functions.use.icon', label: 'Icono de uso', type: 'text', placeholder: 'Icono de la función de uso', colClass: 'col-sm-6' },
+        { name: 'functions.use.icon', label: 'Icono de uso', type: 'text', placeholder: 'Icono de la función de uso', colClass: 'col-sm-6', description: 'El icono que se muestra en la función de usar, si no conoces como funciona mejor dejalo vacio.' },
       ]
     },
     {
