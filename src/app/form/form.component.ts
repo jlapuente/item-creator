@@ -63,8 +63,21 @@ export class ContactFormComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      label: 'Documento',
+      value: 'document',
+      fields: [
+        { name: 'docName', label: 'Nombre del documento', type: 'text', placeholder: 'Nombre del documento', colClass: 'col-sm-12' },
+        { name: 'docLink', label: 'Link del documento', type: 'text', placeholder: 'Link del documento', colClass: 'col-sm-12' },
+      ]
+    },
+    {
       label: 'Rol',
       value: 'rol',
+      fields: []
+    },
+    {
+      label: 'Quest item',
+      value: 'quest_item',
       fields: []
     },
     {
