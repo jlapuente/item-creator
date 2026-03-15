@@ -14,12 +14,9 @@
           <div class="row">
             <div class="col-sm-12 mb-3">
               <div class="form-group">
-                <label class="required-field" for="fileName">Nombre del fichero</label>
+                <label for="fileName">Nombre del fichero</label>
                 <input type="text" class="form-control" id="fileName" formControlName="fileName"
-                  placeholder="Nombre del fichero">
-                <small *ngIf="itemForm.get('fileName')?.invalid && itemForm.get('fileName')?.touched" class="text-danger">
-                  Este campo es obligatorio.
-                </small>
+                  placeholder="Se genera automáticamente" readonly>
               </div>
             </div>
 
@@ -82,6 +79,56 @@
                 <input type="text" class="form-control" id="width" formControlName="width" placeholder="Anchura">
               </div>
             </div>
+
+            <!-- Selector de Base -->
+            <div class="col-sm-6 mb-3">
+              <div class="form-group">
+                <label for="base">Base</label>
+                <select class="form-control" id="base" formControlName="base">
+                  <option value="">-- Selecciona una base --</option>
+                  <option *ngFor="let option of baseOptions" [value]="option.value">{{ option.label }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-sm-6 mb-3">
+              <div class="form-group">
+                <label for="category">Categoría</label>
+                <input type="text" class="form-control" id="category" formControlName="category"
+                  placeholder="Categoría del item">
+              </div>
+            </div>
+
+            <!-- Campos dinámicos según la base seleccionada -->
+            <ng-container *ngFor="let field of activeBaseFields">
+              <div [ngClass]="field.colClass || 'col-sm-6'" class="mb-3">
+                <div class="form-group">
+                  <label [for]="field.name">{{ field.label }}</label>
+
+                  <!-- Text input -->
+                  <input *ngIf="field.type === 'text'" type="text" class="form-control"
+                    [id]="field.name" [formControlName]="field.name" [placeholder]="field.placeholder || ''">
+
+                  <!-- Number input -->
+                  <input *ngIf="field.type === 'number'" type="number" class="form-control"
+                    [id]="field.name" [formControlName]="field.name" [placeholder]="field.placeholder || ''">
+
+                  <!-- Textarea -->
+                  <textarea *ngIf="field.type === 'textarea'" class="form-control"
+                    [id]="field.name" [formControlName]="field.name" [placeholder]="field.placeholder || ''" rows="3"></textarea>
+
+                  <!-- Select -->
+                  <select *ngIf="field.type === 'select'" class="form-control"
+                    [id]="field.name" [formControlName]="field.name">
+                    <option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.label }}</option>
+                  </select>
+
+                  <!-- Checkbox -->
+                  <input *ngIf="field.type === 'checkbox'" type="checkbox" class="form-check-input"
+                    [id]="field.name" [formControlName]="field.name">
+                </div>
+              </div>
+            </ng-container>
             
             <div class="col-sm-4 mb-3">
               <div class="form-group">
